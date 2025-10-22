@@ -7,8 +7,8 @@ type Player struct {
 }
 
 type MatchResult struct {
-	Team1Players []Player `json:"team1Players"`
-	Team2Players []Player `json:"team2Players"`
+	Team1Players []Player       `json:"team1Players"`
+	Team2Players []Player       `json:"team2Players"`
 	Team1Rounds  int            `json:"team1Rounds"`
 	Team2Rounds  int            `json:"team2Rounds"`
 }
@@ -16,4 +16,6 @@ type MatchResult struct {
 type PlayerMMRChange struct {
 	PlayerID  string `json:"playerId"`
 	MMRChange int    `json:"mmrChange"`
+	OldMMR	  int    `json:"oldMmr"`
+	NewMMR    int    `json:"newMmr"`
 }

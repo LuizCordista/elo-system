@@ -50,6 +50,8 @@ func (mp *MatchProcessorImpl) processTeamMMRChanges(players []model.Player, expe
 		results = append(results, model.PlayerMMRChange{
 			PlayerID:  p.PlayerID,
 			MMRChange: change,
+			OldMMR: p.OldMMR,
+			NewMMR: p.OldMMR + change,
 		})
 	}
 
