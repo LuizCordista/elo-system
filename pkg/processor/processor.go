@@ -5,32 +5,42 @@ import (
 	"github.com/luizcordista/elo-system/pkg/rating"
 )
 
-func ProcessMatchResult(match model.MatchResult) []model.PlayerMMRChange {
+type MatchProcessorImpl struct {
+	ratingCalculator rating.RatingCalculator
+}
+
+func NewMatchProcessor(ratingCalculator rating.RatingCalculator) MatchProcessor {
+	return &MatchProcessorImpl{
+		ratingCalculator: ratingCalculator,
+	}
+}
+
+func (mp *MatchProcessorImpl) ProcessMatchResult(match model.MatchResult) []model.PlayerMMRChange {
 	results := make([]model.PlayerMMRChange, 0)
 
 	team1Average := calculateTeamAverageMMR(match.Team1Players)
 	team2Average := calculateTeamAverageMMR(match.Team2Players)
 
-	expectedScoreTeam1 := rating.CalculateExpectedScore(team1Average, team2Average)
-	expectedScoreTeam2 := rating.CalculateExpectedScore(team2Average, team1Average)
+	expectedScoreTeam1 := mp.ratingCalculator.CalculateExpectedScore(team1Average, team2Average)
+	expectedScoreTeam2 := mp.ratingCalculator.CalculateExpectedScore(team2Average, team1Average)
 
-	roundModifier := rating.CalculateRoundModifier(match.Team1Rounds, match.Team2Rounds)
+	roundModifier := mp.ratingCalculator.CalculateRoundModifier(match.Team1Rounds, match.Team2Rounds)
 
 	didTeam1Win := match.Team1Rounds > match.Team2Rounds
 	didTeam2Win := match.Team2Rounds > match.Team1Rounds
 
-	results = append(results, processTeamMMRChanges(match.Team1Players, expectedScoreTeam1, roundModifier, didTeam1Win)...)
-	results = append(results, processTeamMMRChanges(match.Team2Players, expectedScoreTeam2, roundModifier, didTeam2Win)...)
+	results = append(results, mp.processTeamMMRChanges(match.Team1Players, expectedScoreTeam1, roundModifier, didTeam1Win)...)
+	results = append(results, mp.processTeamMMRChanges(match.Team2Players, expectedScoreTeam2, roundModifier, didTeam2Win)...)
 
 	return results
 }
 
-func processTeamMMRChanges(players []model.Player, expectedScore float64, roundModifier float64, didWin bool) []model.PlayerMMRChange {
+func (mp *MatchProcessorImpl) processTeamMMRChanges(players []model.Player, expectedScore float64, roundModifier float64, didWin bool) []model.PlayerMMRChange {
 	results := make([]model.PlayerMMRChange, 0)
 
 	for _, p := range players {
-		ind := rating.CalculateIndividualPerformance(p.PerformanceRating)
-		change := rating.CalculateMMRChange(
+		ind := mp.ratingCalculator.CalculateIndividualPerformance(p.PerformanceRating)
+		change := mp.ratingCalculator.CalculateMMRChange(
 			rating.DefaultKFactor,
 			expectedScore,
 			roundModifier,

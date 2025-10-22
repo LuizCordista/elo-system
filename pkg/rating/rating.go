@@ -4,24 +4,28 @@ import "math"
 
 const (
 	DefaultKFactor = 40.0
-
-	MaxRating = 1.3
-	MinRating = 0.7
-
-	MaxRounds = 13.0
+	MaxRating      = 1.3
+	MinRating      = 0.7
+	MaxRounds      = 13.0
 )
 
-func CalculateExpectedScore(teamAverageMMR, opponentAverageMMR int) float64 {
+type EloRatingCalculator struct{}
+
+func NewEloRatingCalculator() RatingCalculator {
+	return &EloRatingCalculator{}
+}
+
+func (e *EloRatingCalculator) CalculateExpectedScore(teamAverageMMR, opponentAverageMMR int) float64 {
 	diff := float64(opponentAverageMMR - teamAverageMMR)
 	return 1.0 / (1.0 + math.Pow(10.0, diff/400.0))
 }
 
-func CalculateRoundModifier(team1rounds, team2rounds int) float64 {
+func (e *EloRatingCalculator) CalculateRoundModifier(team1rounds, team2rounds int) float64 {
 	roundDifference := math.Abs(float64(team1rounds - team2rounds))
 	return 1.0 + (0.5 * (roundDifference / MaxRounds))
 }
 
-func CalculateIndividualPerformance(playerPerformanceRating float64) float64 {
+func (e *EloRatingCalculator) CalculateIndividualPerformance(playerPerformanceRating float64) float64 {
 	if playerPerformanceRating > MaxRating {
 		return MaxRating
 	}
@@ -31,7 +35,7 @@ func CalculateIndividualPerformance(playerPerformanceRating float64) float64 {
 	return playerPerformanceRating
 }
 
-func CalculateMMRChange(kFactor float64, expectedScore, roundModifier, individualPerformance float64, didWin bool) int {
+func (e *EloRatingCalculator) CalculateMMRChange(kFactor float64, expectedScore, roundModifier, individualPerformance float64, didWin bool) int {
 	var mmrChange float64
 	if didWin {
 		delta := 1.0 - expectedScore
