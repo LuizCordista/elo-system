@@ -18,19 +18,19 @@ func NewMatchProcessor(ratingCalculator rating.RatingCalculator) MatchProcessor 
 func (mp *MatchProcessorImpl) ProcessMatchResult(match model.MatchResult) []model.PlayerMMRChange {
 	results := make([]model.PlayerMMRChange, 0)
 
-	team1Average := calculateTeamAverageMMR(match.Team1Players)
-	team2Average := calculateTeamAverageMMR(match.Team2Players)
+	teamAAverage := calculateTeamAverageMMR(match.TeamAPlayers)
+	teamBAverage := calculateTeamAverageMMR(match.TeamBPlayers)
 
-	expectedScoreTeam1 := mp.ratingCalculator.CalculateExpectedScore(team1Average, team2Average)
-	expectedScoreTeam2 := mp.ratingCalculator.CalculateExpectedScore(team2Average, team1Average)
+	expectedScoreTeamA := mp.ratingCalculator.CalculateExpectedScore(teamAAverage, teamBAverage)
+	expectedScoreTeamB := mp.ratingCalculator.CalculateExpectedScore(teamBAverage, teamAAverage)
 
-	roundModifier := mp.ratingCalculator.CalculateRoundModifier(match.Team1Rounds, match.Team2Rounds)
+	roundModifier := mp.ratingCalculator.CalculateRoundModifier(match.TeamARounds, match.TeamBRounds)
 
-	didTeam1Win := match.Team1Rounds > match.Team2Rounds
-	didTeam2Win := match.Team2Rounds > match.Team1Rounds
+	didTeamAWin := match.TeamARounds > match.TeamBRounds
+	didTeamBWin := match.TeamBRounds > match.TeamARounds
 
-	results = append(results, mp.processTeamMMRChanges(match.Team1Players, expectedScoreTeam1, roundModifier, didTeam1Win)...)
-	results = append(results, mp.processTeamMMRChanges(match.Team2Players, expectedScoreTeam2, roundModifier, didTeam2Win)...)
+	results = append(results, mp.processTeamMMRChanges(match.TeamAPlayers, expectedScoreTeamA, roundModifier, didTeamAWin)...)
+	results = append(results, mp.processTeamMMRChanges(match.TeamBPlayers, expectedScoreTeamB, roundModifier, didTeamBWin)...)
 
 	return results
 }

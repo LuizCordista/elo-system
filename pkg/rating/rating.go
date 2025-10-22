@@ -20,8 +20,8 @@ func (e *EloRatingCalculator) CalculateExpectedScore(teamAverageMMR, opponentAve
 	return 1.0 / (1.0 + math.Pow(10.0, diff/400.0))
 }
 
-func (e *EloRatingCalculator) CalculateRoundModifier(team1rounds, team2rounds int) float64 {
-	roundDifference := math.Abs(float64(team1rounds - team2rounds))
+func (e *EloRatingCalculator) CalculateRoundModifier(teamARounds, teamBRounds int) float64 {
+	roundDifference := math.Abs(float64(teamARounds - teamBRounds))
 	return 1.0 + (0.5 * (roundDifference / MaxRounds))
 }
 

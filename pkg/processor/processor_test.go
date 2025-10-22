@@ -14,7 +14,7 @@ func TestMatchProcessorImpl_ProcessMatchResult_5v5(t *testing.T) {
 
 	match := model.MatchResult{
 		// Median MMR of Team 1 is 1000
-		Team1Players: []model.Player{
+		TeamAPlayers: []model.Player{
 			{PlayerID: "1", OldMMR: 1000, PerformanceRating: 1.2},
 			{PlayerID: "2", OldMMR: 1100, PerformanceRating: 1.1},
 			{PlayerID: "3", OldMMR: 950, PerformanceRating: 1.3},
@@ -22,15 +22,15 @@ func TestMatchProcessorImpl_ProcessMatchResult_5v5(t *testing.T) {
 			{PlayerID: "5", OldMMR: 900, PerformanceRating: 0.9},
 		},
 		// Median MMR of Team 2 is 1100
-		Team2Players: []model.Player{
+		TeamBPlayers: []model.Player{
 			{PlayerID: "6", OldMMR: 1200, PerformanceRating: 0.8},
 			{PlayerID: "7", OldMMR: 1150, PerformanceRating: 0.9},
 			{PlayerID: "8", OldMMR: 1000, PerformanceRating: 0.7},
 			{PlayerID: "9", OldMMR: 1100, PerformanceRating: 1.0},
 			{PlayerID: "10", OldMMR: 1050, PerformanceRating: 1.1},
 		},
-		Team1Rounds: 13,
-		Team2Rounds: 7,
+		TeamARounds: 13,
+		TeamBRounds: 7,
 	}
 
 	expectedChanges := []model.PlayerMMRChange{
